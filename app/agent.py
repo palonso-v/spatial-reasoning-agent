@@ -32,7 +32,9 @@ from app.tools.geometry import (
 
 load_dotenv()
 
-client = OpenAI()
+from shared.openai_client import (
+    get_openai_client,
+)
 
 SCENE_PATH = Path("data/modelnet_scene.ply")
 LABELS_PATH = Path("data/modelnet_scene_labels.json")
@@ -563,6 +565,9 @@ def run_agent(
     scene_path: str | Path = SCENE_PATH,
     labels_path: str | Path = LABELS_PATH,
 ):
+
+    client = get_openai_client()
+
     scene = load_scene(
         scene_path
     )
