@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        3D Spatial Reasoning Agent
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+
+<body>
+
+    <div id="app">
+
+        <aside id="sidebar">
+
+            <h1>
+                Spatial Reasoning Agent
+            </h1>
+
+            <p class="subtitle">
+                Interactive 3D scene
+            </p>
+
+            <div id="status">
+                Loading scene...
+            </div>
+
+            <h2>
+                Ask about the scene
+            </h2>
+
+            <textarea
+                id="question-input"
+                placeholder="e.g. Can the box pass through the doorway opening?"
+                rows="4"
+            ></textarea>
+
+            <button id="ask-button">
+                Ask
+            </button>
+
+            <div id="answer-panel">
+
+                <div id="answer-label">
+                    Answer
+                </div>
+
+                <div id="answer-text">
+                    Ask a spatial question to begin.
+                </div>
+
+            </div>
+
+
+            <div id="reasoning-panel">
+
+                <div id="reasoning-label">
+                    Reasoning used
+                </div>
+
+                <div id="reasoning-steps">
+                    No reasoning steps yet.
+                </div>
+
+            </div>
+
+
+            <details id="trace-panel">
+
+                <summary>
+                    Raw tool trace
+                </summary>
+
+                <pre id="trace-text"></pre>
+
+            </details>
+
+
+            <h2>
+                Objects
+            </h2>
+
+            <div id="object-list"></div>
+
+
+            </aside>
+
+
+        <main id="viewer-container">
+
+            <div id="viewer"></div>
+
+        </main>
+
+    </div>
+
+
+    <script
+        type="module"
+        src="/static/app.js"
+    ></script>
+
+</body>
+
+</html>

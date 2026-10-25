@@ -13,6 +13,7 @@ class SceneObject:
     max_bound: np.ndarray
     dimensions: np.ndarray
     point_count: int
+    points: np.ndarray
     label: str | None = None
 
     @property
@@ -26,16 +27,24 @@ class Scene:
     objects: list[SceneObject]
 
 
-def load_point_cloud(path: str | Path) -> o3d.geometry.PointCloud:
+def load_point_cloud(
+    path: str | Path,
+) -> o3d.geometry.PointCloud:
     path = Path(path)
 
     if not path.exists():
-        raise FileNotFoundError(f"Point cloud not found: {path}")
+        raise FileNotFoundError(
+            f"Point cloud not found: {path}"
+        )
 
-    cloud = o3d.io.read_point_cloud(str(path))
+    cloud = o3d.io.read_point_cloud(
+        str(path)
+    )
 
     if cloud.is_empty():
-        raise ValueError(f"Point cloud is empty: {path}")
+        raise ValueError(
+            f"Point cloud is empty: {path}"
+        )
 
     return cloud
 
@@ -54,23 +63,38 @@ def segment_objects(
         )
     )
 
-    points = np.asarray(cloud.points)
+    points = np.asarray(
+        cloud.points
+    )
 
     cluster_ids = sorted(
-        label for label in set(labels)
+        label
+        for label in set(labels)
         if label != -1
     )
 
     raw_objects = []
 
     for cluster_id in cluster_ids:
-        cluster_points = points[labels == cluster_id]
+        cluster_points = points[
+            labels == cluster_id
+        ]
 
-        min_bound = cluster_points.min(axis=0)
-        max_bound = cluster_points.max(axis=0)
+        min_bound = (
+            cluster_points.min(axis=0)
+        )
 
-        centroid = cluster_points.mean(axis=0)
-        dimensions = max_bound - min_bound
+        max_bound = (
+            cluster_points.max(axis=0)
+        )
+
+        centroid = (
+            cluster_points.mean(axis=0)
+        )
+
+        dimensions = (
+            max_bound - min_bound
+        )
 
         raw_objects.append(
             {
@@ -78,24 +102,50 @@ def segment_objects(
                 "min_bound": min_bound,
                 "max_bound": max_bound,
                 "dimensions": dimensions,
-                "point_count": len(cluster_points),
+                "point_count": len(
+                    cluster_points
+                ),
+                "points": cluster_points,
             }
         )
 
-    # Keep IDs deterministic across runs.
-    raw_objects.sort(key=lambda obj: obj["centroid"][0])
+    # Keep object IDs deterministic across runs.
+    # Objects are ordered from left to right
+    # according to centroid x-coordinate.
+    raw_objects.sort(
+        key=lambda obj: (
+            obj["centroid"][0]
+        )
+    )
 
     objects = []
 
-    for index, obj in enumerate(raw_objects):
+    for index, obj in enumerate(
+        raw_objects
+    ):
         objects.append(
             SceneObject(
-                object_id=f"object_{index}",
-                centroid=obj["centroid"],
-                min_bound=obj["min_bound"],
-                max_bound=obj["max_bound"],
-                dimensions=obj["dimensions"],
-                point_count=obj["point_count"],
+                object_id=(
+                    f"object_{index}"
+                ),
+                centroid=obj[
+                    "centroid"
+                ],
+                min_bound=obj[
+                    "min_bound"
+                ],
+                max_bound=obj[
+                    "max_bound"
+                ],
+                dimensions=obj[
+                    "dimensions"
+                ],
+                point_count=obj[
+                    "point_count"
+                ],
+                points=obj[
+                    "points"
+                ],
             )
         )
 
@@ -108,7 +158,9 @@ def load_scene(
     min_points: int = 10,
 ) -> Scene:
 
-    cloud = load_point_cloud(path)
+    cloud = load_point_cloud(
+        path
+    )
 
     objects = segment_objects(
         cloud,

@@ -34,8 +34,8 @@ load_dotenv()
 
 client = OpenAI()
 
-SCENE_PATH = Path("data/demo_scene.ply")
-LABELS_PATH = Path("data/demo_labels.json")
+SCENE_PATH = Path("data/modelnet_scene.ply")
+LABELS_PATH = Path("data/modelnet_scene_labels.json")
 
 
 AGENT_INSTRUCTIONS = (
@@ -560,13 +560,15 @@ def execute_tool(
 def run_agent(
     question: str,
     return_trace: bool = False,
+    scene_path: str | Path = SCENE_PATH,
+    labels_path: str | Path = LABELS_PATH,
 ):
     scene = load_scene(
-        SCENE_PATH
+        scene_path
     )
 
     labels = load_labels(
-        LABELS_PATH
+        labels_path
     )
 
     scene = apply_labels(
@@ -621,13 +623,6 @@ def run_agent(
                 call.arguments
             )
 
-            tool_trace.append(
-                {
-                    "name": call.name,
-                    "arguments": arguments,
-                }
-            )
-
             print(
                 f"TOOL: {call.name} "
                 f"{arguments}"
@@ -647,6 +642,14 @@ def run_agent(
 
             print(
                 f"RESULT: {result}"
+            )
+
+            tool_trace.append(
+                {
+                    "name": call.name,
+                    "arguments": arguments,
+                    "result": result,
+                }
             )
 
             input_items.append(
